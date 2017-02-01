@@ -1,13 +1,13 @@
-import LeapAPI.Leap as lp, sys, thread, time
+import LeapAPI.Leap as lp, sys, thread
 from LeapAPI.Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 import numpy as np
 from matplotlib import pyplot
+
+
 #import pandas as pd
+strC = lambda c,s: '\x1b['+c+'m'+s+'\x1b[0m'
 
 class SampleListener(lp.Listener):
-    finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
-    bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
-    state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
     timeOld = 0
     x_ = np.eye(1, 16)
     time_Cooldown = 1000000
@@ -58,9 +58,26 @@ class SampleListener(lp.Listener):
             #sys.stdout.flush()1
 
             if frame.timestamp-self.timeOld > self.time_Cooldown:
-                print(str(x-self.x_) + "\n") #print error
+                err = x-self.x_
+                print(str(err) + "\n") #print error
                 self.x_ = x
                 self.timeOld=frame.timestamp
+                #
+                try:
+                    an = input(strC('2;30;42','Input answer:')) #TODO: debug!!!
+                    print(strC("6;30;41","a="+an))
+                    f = open("foo.csv", "a")
+                    f.write("\n***NEW***\n")
+                    np.savetxt(f, err, delimiter=",", newline=";")
+                    f.write("@"+an)
+                    f.close()
+                except:
+                    print("non")
+
+                self.timeOld = frame.timestamp #?
+                #
+
+
         else:
             self.timeOld = frame.timestamp
         #for hand in frame.hands:
